@@ -79,7 +79,7 @@ class SiteIDHook(IntHookBase):
         if DEFAULT_SITE_ID:
             site = get_site_by_host(DEFAULT_SITE_ID, field='pk')
             if site:
-                self.cache(host, site.pk)
+                self.set_and_cache(host, site.pk)
                 return
 
         if ALLOW_FALLBACK:
