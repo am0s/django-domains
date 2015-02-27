@@ -15,6 +15,7 @@ except ImportError:
 from domains.hooks.base import IntHookBase
 
 
+DEFAULT_SITE_ID = getattr(settings, 'DOMAINS_DEFAULT_SITE_ID', 0)
 HOST_CACHE = {}
 
 
@@ -61,6 +62,9 @@ class SiteIDHook(IntHookBase):
             return
         host = request.get_host()
         shost = host.rsplit(':', 1)[0]  # just host, no port
+
+        # Initialize with default value to reset the thread-local variable
+        self.set(DEFAULT_SITE_ID)
 
         if host in HOST_CACHE:
             self.set(HOST_CACHE[host])
