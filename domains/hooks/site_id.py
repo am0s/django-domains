@@ -15,6 +15,7 @@ except ImportError:
 from domains.hooks.base import IntHookBase
 
 
+ALLOW_FALLBACK = getattr(settings, 'DOMAINS_ALLOW_FALLBACK', False)
 DEFAULT_SITE_ID = getattr(settings, 'DOMAINS_DEFAULT_SITE_ID', 0)
 HOST_CACHE = {}
 
@@ -87,9 +88,10 @@ class SiteIDHook(IntHookBase):
                 self.cache(host, site.pk)
                 return
 
-        try:  # misconfigured settings?
-            site = get_site_model().objects.all()[0]
-            self.set_and_cache(host, site.pk)
-            return
-        except IndexError:  # no sites in db
-            pass
+        if ALLOW_FALLBACK:
+            try:  # misconfigured settings?
+                site = get_site_model().objects.all()[0]
+                self.set_and_cache(host, site.pk)
+                return
+            except IndexError:  # no sites in db
+                pass
