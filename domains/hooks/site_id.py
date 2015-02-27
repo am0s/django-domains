@@ -74,10 +74,12 @@ class SiteIDHook(IntHookBase):
             if site:
                 self.set_and_cache(host, site.pk)
                 return
-        site = get_site_by_host(settings.SITE_ID, field='pk')
-        if site:
-            self.cache(host, site.pk)
-            return
+
+        if DEFAULT_SITE_ID:
+            site = get_site_by_host(DEFAULT_SITE_ID, field='pk')
+            if site:
+                self.cache(host, site.pk)
+                return
 
         try:  # misconfigured settings?
             site = get_site_model().objects.all()[0]
